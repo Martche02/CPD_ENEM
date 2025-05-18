@@ -20,15 +20,19 @@ class PatriciaTree:
             if comum:
                 if comum == prefixo:
                     # Caso comum total, segue para o filho
+                    # Caso comum total, segue para o filho
                     self._inserir(filho, texto[len(comum):], posicao)
                 else:
                     # Dividir o nó
+                    # Dividir o nó
                     novo_filho = NoPatricia(prefixo[len(comum):])
+                    # Transferir dados do filho antigo para o novo_filho
                     # Transferir dados do filho antigo para o novo_filho
                     novo_filho.filhos = filho.filhos
                     novo_filho.posicoes = filho.posicoes
                     novo_filho.fim = filho.fim
 
+                    # Atualizar o filho antigo com o prefixo comum
                     # Atualizar o filho antigo com o prefixo comum
                     filho.chave = comum
                     filho.filhos = [(novo_filho.chave, novo_filho)]
@@ -44,6 +48,7 @@ class PatriciaTree:
                 return
 
         # Não tem prefixo comum: novo filho (caso base)
+        # Não tem prefixo comum: novo filho (caso base)
         novo = NoPatricia(texto)
         novo.fim = True
         novo.posicoes.append(posicao)
@@ -55,7 +60,11 @@ class PatriciaTree:
     def _buscar(self, no: NoPatricia, prefixo: str) -> List[int]:
         resultado = []
 
+        resultado = []
+
         for chave, filho in no.filhos:
+            print(f"[DEBUG] No: '{no.chave}' — Verificando aresta '{chave}' com prefixo '{prefixo}'")
+
             if prefixo.startswith(chave):
                 resultado.extend(self._buscar(filho, prefixo[len(chave):]))
 
