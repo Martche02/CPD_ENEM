@@ -1,7 +1,7 @@
 import struct
 
-TAMANHO_REGISTRO = 240
-FORMATO_REGISTRO = '10sii10sff200s'  # Struct format: str[10], int, int, str[10], float, float, str[200]
+TAMANHO_REGISTRO = 248
+FORMATO_REGISTRO = '10sii10sff200sff'  # Struct format: str[10], int, int, str[10], float, float, str[200], float, float
 
 def pad_str(texto: str, tamanho: int) -> bytes:
     return texto.encode('utf-8')[:tamanho].ljust(tamanho, b'\x00')
@@ -20,7 +20,9 @@ def gravar_registro(caminho_arquivo: str, registro: dict) -> int:
             pad_str(registro['prova'], 10),
             registro['dificuldade'],
             registro['taxa_acerto'],
-            pad_str(registro['texto'], 200)
+            pad_str(registro['texto'], 200),
+            registro['discriminacao'],
+            registro['acerto_chute'],
         )
         f.write(dados)
         return pos  # Retorna posição onde foi escrito
@@ -40,5 +42,7 @@ def ler_registro(caminho_arquivo: str, posicao: int) -> dict:
             'prova': unpacked[3].decode('utf-8').strip('\x00'),
             'dificuldade': unpacked[4],
             'taxa_acerto': unpacked[5],
-            'texto': unpacked[6].decode('utf-8').strip('\x00')
+            'texto': unpacked[6].decode('utf-8').strip('\x00'),
+            'discriminacao': unpacked[7],
+            'acerto_chute': unpacked[8],
         }
