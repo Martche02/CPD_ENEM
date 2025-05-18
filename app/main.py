@@ -64,8 +64,8 @@ else:
     print("Não encontrado.")
 
 # Consulta por prefixo de texto (Patricia)
-print("\n🔍 Buscar por texto 'Patr':")
-poses = indice_texto.buscar_prefixo('Patr')
+print("\n🔍 Buscar por texto 'Pati':")
+poses = indice_texto.buscar_prefixo('Pati')
 print(poses)
 for pos in poses:
     r = ler_registro(CAMINHO_DADOS, pos)
