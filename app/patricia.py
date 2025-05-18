@@ -63,8 +63,6 @@ class PatriciaTree:
         resultado = []
 
         for chave, filho in no.filhos:
-            print(f"[DEBUG] No: '{no.chave}' — Verificando aresta '{chave}' com prefixo '{prefixo}'")
-
             if prefixo.startswith(chave):
                 resultado.extend(self._buscar(filho, prefixo[len(chave):]))
 
