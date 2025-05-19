@@ -6,8 +6,6 @@ Este projeto usa estruturas de dados avançadas (árvore binária, árvore B+, �
 ## Requisitos
 
 - Python 3.12
-- Numpy
-- Scipy
 
 ### OU
 
