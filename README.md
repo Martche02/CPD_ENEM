@@ -30,7 +30,7 @@ docker compose run --rm app
 
 ---
 
-## Para desenvolvedores
+## Estrutura
 
 ### Estrutura de pastas
 
