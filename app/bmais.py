@@ -1,4 +1,5 @@
 from typing import List, Callable
+import pickle
 
 class NoBMais:
     def __init__(self, folha=False):
@@ -85,3 +86,67 @@ class BMaisTree:
             for pos in no.filhos:
                 callback(pos)
             no = no.prox
+
+    def salvar_em_arquivo(self, caminho: str) -> None:
+        """
+        Serializa a árvore B+ de forma plana (sem recursão).
+        """
+        nodemap = {}  # NoBMais → id
+        nodelist = []
+        queue = [(self.raiz, None)]  # (nó, pai_id)
+
+        while queue:
+            no, _ = queue.pop(0)
+            if no in nodemap:
+                continue
+            no_id = len(nodelist)
+            nodemap[no] = no_id
+
+            filhos_ids = []
+            for f in no.filhos:
+                if isinstance(f, NoBMais):
+                    queue.append((f, no_id))
+                    filhos_ids.append(None)  # temporário
+                else:
+                    filhos_ids.append(f)
+
+            nodelist.append({
+                'folha': no.folha,
+                'chaves': no.chaves,
+                'filhos': filhos_ids,
+                'prox': None  # será preenchido depois
+            })
+
+        # resolver filhos e prox
+        for i, no in enumerate(nodelist):
+            real_no = list(nodemap.keys())[i]
+            no['filhos'] = [
+                nodemap[f] if isinstance(f, NoBMais) else f
+                for f in real_no.filhos
+            ]
+            if real_no.prox is not None:
+                no['prox'] = nodemap.get(real_no.prox)
+
+        with open(caminho, 'wb') as f:
+            pickle.dump({'ordem': self.ordem, 'raiz': 0, 'nodes': nodelist}, f)
+
+    @staticmethod
+    def carregar_de_arquivo(caminho: str) -> 'BMaisTree':
+        with open(caminho, 'rb') as f:
+            data = pickle.load(f)
+
+        ordem = data['ordem']
+        nodes_raw = data['nodes']
+        inst = [NoBMais(folha=raw['folha']) for raw in nodes_raw]
+
+        for i, raw in enumerate(nodes_raw):
+            inst[i].chaves = raw['chaves']
+            inst[i].filhos = [
+                inst[f] if isinstance(f, int) and f < len(inst) and raw['folha'] is False else f
+                for f in raw['filhos']
+            ]
+            inst[i].prox = inst[raw['prox']] if raw['prox'] is not None else None
+
+        tree = BMaisTree(ordem)
+        tree.raiz = inst[data['raiz']]
+        return tree

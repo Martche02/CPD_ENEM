@@ -1,4 +1,5 @@
 from typing import List, Tuple
+import pickle
 
 class NoPatricia:
     def __init__(self, chave: str = ''):
@@ -83,3 +84,51 @@ class PatriciaTree:
         while i < min(len(a), len(b)) and a[i] == b[i]:
             i += 1
         return a[:i]
+
+    def salvar_em_arquivo(self, caminho: str) -> None:
+        """
+        Serializa a árvore Patricia em forma plana.
+        """
+        nodes = []
+        index_map = {}
+
+        def walk(no):
+            if no in index_map:
+                return index_map[no]
+            idx = len(nodes)
+            index_map[no] = idx
+            nodes.append({
+                'chave': no.chave,
+                'posicoes': no.posicoes,
+                'fim': no.fim,
+                'filhos': []  # preenchido depois
+            })
+            for chave, filho in no.filhos:
+                child_idx = walk(filho)
+                nodes[idx]['filhos'].append((chave, child_idx))
+            return idx
+
+        raiz_idx = walk(self.raiz)
+
+        with open(caminho, 'wb') as f:
+            pickle.dump({'raiz': raiz_idx, 'nodes': nodes}, f)
+
+    @staticmethod
+    def carregar_de_arquivo(caminho: str) -> 'PatriciaTree':
+        with open(caminho, 'rb') as f:
+            data = pickle.load(f)
+
+        raw_nodes = data['nodes']
+        inst = [NoPatricia() for _ in raw_nodes]
+
+        for i, raw in enumerate(raw_nodes):
+            inst[i].chave = raw['chave']
+            inst[i].posicoes = raw['posicoes']
+            inst[i].fim = raw['fim']
+
+        for i, raw in enumerate(raw_nodes):
+            inst[i].filhos = [(chave, inst[child_idx]) for chave, child_idx in raw['filhos']]
+
+        tree = PatriciaTree()
+        tree.raiz = inst[data['raiz']]
+        return tree

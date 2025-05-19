@@ -73,42 +73,27 @@ class BinariaTree:
             data = {'raiz': mapping[self.raiz], 'nodes': nodes}
         with open(caminho, 'wb') as f:
             pickle.dump(data, f)
-
-    def carregar_de_arquivo(self, caminho: str) -> None:
-        """
-        Lê a lista plana e reconstrói a árvore binária em memória.
-        """
+    @staticmethod
+    def carregar_de_arquivo(caminho: str) -> 'BinariaTree':
         try:
             with open(caminho, 'rb') as f:
                 data = pickle.load(f)
         except FileNotFoundError:
-            self.raiz = None
-            return
+            return BinariaTree()
 
         nodes_data = data.get('nodes', [])
         raiz_idx = data.get('raiz')
         if raiz_idx is None or not nodes_data:
-            self.raiz = None
-            return
+            return BinariaTree()
 
-        instancias: List[NoBinaria] = []
-        for entry in nodes_data:
-            instancias.append(NoBinaria(entry['chave'], entry['posicao']))
+        instancias = [NoBinaria(entry['chave'], entry['posicao']) for entry in nodes_data]
         for idx, entry in enumerate(nodes_data):
             no = instancias[idx]
             esq = entry.get('esq')
             dir_ = entry.get('dir')
             no.esq = instancias[esq] if esq is not None else None
             no.dir = instancias[dir_] if dir_ is not None else None
-        self.raiz = instancias[raiz_idx]
 
-    def todos(self):
-        resultados = []
-        def percorrer(no: NoBinaria) -> None:
-            if no is None:
-                return
-            percorrer(no.esq)
-            resultados.append((no.chave, no.posicao))
-            percorrer(no.dir)
-        percorrer(self.raiz)
-        return resultados
+        tree = BinariaTree()
+        tree.raiz = instancias[raiz_idx]
+        return tree
