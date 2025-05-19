@@ -1,9 +1,9 @@
 import os, csv, json
-from binaria import BinariaTree
-from bmais import BMaisTree
-from patricia import PatriciaTree
-from manipulador import gravar_registro, ler_registro, reescrever_registro
-from tri import calcular_taxa_acerto, safe_float
+from arvores.binaria import BinariaTree
+from arvores.bmais import BMaisTree
+from arvores.patricia import PatriciaTree
+from util.manipulador import gravar_registro, ler_registro, reescrever_registro
+from util.tri import calcular_taxa_acerto, safe_float
 
 BASE_ORIGEM = 'origem'
 BASE_DADOS  = 'dados'

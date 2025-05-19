@@ -1,4 +1,4 @@
-from manipulador import ler_registro
+from util.manipulador import ler_registro
 
 ARQ_DAT = 'dados/questoes.dat'
 

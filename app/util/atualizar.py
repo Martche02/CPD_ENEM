@@ -1,6 +1,6 @@
 import csv, json
-from manipulador import gravar_registro, ler_registro, reescrever_registro
-from tri import calcular_taxa_acerto, safe_float
+from util.manipulador import gravar_registro, ler_registro, reescrever_registro
+from util.tri import calcular_taxa_acerto, safe_float
 
 ARQ_DAT = 'dados/questoes.dat'
 COMBINADO = 'origem/combinado.json'

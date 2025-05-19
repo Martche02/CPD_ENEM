@@ -1,14 +1,13 @@
-from carregar import (
+from util.carregar import (
     limpar_bases, criar_indices_vazios,
     inserir_csvs, atualizar_combinado,
     salvar_indices, carregar_indices
 )
-from atualizar import adicionar_csv_manual, reaplicar_json
-from interface import menu
-from testes import verificar_exemplo_por_id, testar_prefixo, testar_disciplina
-
+from util.atualizar import adicionar_csv_manual, reaplicar_json
+from util.interface import menu
+from util.testes import verificar_exemplo_por_id, testar_prefixo, testar_disciplina
+from util.manipulador import TAMANHO_REGISTRO
 import os
-from manipulador import TAMANHO_REGISTRO
 
 ARQ_DAT = 'dados/questoes.dat'
 

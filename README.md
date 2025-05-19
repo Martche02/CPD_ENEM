@@ -1,7 +1,6 @@
 # Projeto De Busca de Questões do ENEM
 
 Este projeto usa estruturas de dados avançadas (árvore binária, árvore B+, árvore Patricia) para classificar e pesquisar questões do ENEM com base em múltiplos critérios (ID, texto, dificuldade, disciplina etc.).
-Este projeto usa estruturas de dados avançadas (árvore binária, árvore B+, árvore Patricia) para classificar e pesquisar questões do ENEM com base em múltiplos critérios (ID, texto, dificuldade, disciplina etc.).
 
 ## Requisitos
 
@@ -26,45 +25,55 @@ python app/main.py
 ```bash
 git clone https://github.com/Martche02/CPD_ENEM.git
 cd CPD_ENEM
-docker compose up
+docker compose run --rm app
 ```
 
 ---
 
 ## Para desenvolvedores
 
-### Visão geral
+### Estrutura de pastas
 
-O sistema é dividido em módulos com responsabilidades bem definidas. O ponto central de controle é o `main.py`, que orquestra as operações administrativas: carregamento da base, atualizações e testes.
+O projeto está organizado em três partes principais:
 
-### Arquivos principais e responsabilidades
+```
+app/
+├── main.py              # ponto de entrada principal
+├── arvores/             # estruturas de dados
+│   ├── binaria.py
+│   ├── bmais.py
+│   └── patricia.py
+└── util/                # utilidades e lógica do domínio
+    ├── atualizar.py
+    ├── carregar.py
+    ├── interface.py
+    ├── manipulador.py
+    ├── testes.py
+    └── tri.py
+```
 
-| Arquivo          | Função principal                                                              |
-| ---------------- | ----------------------------------------------------------------------------- |
-| `main.py`        | Entrada do sistema. Gerencia o menu principal e chama as funções necessárias. |
-| `carregar.py`    | Criação, limpeza, inserção e persistência de todos os índices.                |
-| `atualizar.py`   | Permite adicionar CSVs manuais e reaplicar dados do `combinado.json`.         |
-| `interface.py`   | Interface de navegação interativa via terminal para buscas manuais.           |
-| `testes.py`      | Contém testes práticos para validação rápida do funcionamento.                |
-| `manipulador.py` | Leitura, escrita e reescrita de registros `.dat` com mapeamento fixo.         |
-| `tri.py`         | Lógica de cálculo da taxa de acerto segundo o modelo TRI (3 parâmetros).      |
+### Visão geral dos arquivos
 
-### Estruturas de dados
+| Arquivo               | Função principal                                                                |
+| --------------------- | ------------------------------------------------------------------------------- |
+| `main.py`             | Entrada do sistema. Menu interativo para carregar dados, consultar, testar etc. |
+| `util/carregar.py`    | Criação, limpeza, inserção e persistência de todos os índices.                  |
+| `util/atualizar.py`   | Permite adicionar novos CSVs ou reaplicar dados do `combinado.json`.            |
+| `util/interface.py`   | Interface de navegação interativa via terminal.                                 |
+| `util/testes.py`      | Testes práticos rápidos.                                                        |
+| `util/manipulador.py` | Leitura e escrita de registros `.dat` com estrutura binária fixa.               |
+| `util/tri.py`         | Lógica da Teoria de Resposta ao Item (TRI).                                     |
+| `arvores/binaria.py`  | Árvore binária para índices categóricos.                                        |
+| `arvores/bmais.py`    | Árvore B+ para campos ordenáveis (como dificuldade).                            |
+| `arvores/patricia.py` | Árvore Patricia para busca por prefixo em textos longos.                        |
 
-| Arquivo       | Estrutura               | Uso                                                         |
-| ------------- | ----------------------- | ----------------------------------------------------------- |
-| `binaria.py`  | Árvore Binária de Busca | Para campos categóricos (disciplina, conteúdo, tópico etc.) |
-| `bmais.py`    | Árvore B+               | Para valores ordenáveis como a dificuldade (NU_PARAM_B).    |
-| `patricia.py` | Árvore Patricia         | Para texto longo com busca por prefixo (`texto_long`).      |
+### Detalhes técnicos
 
-Todos os índices são persistidos em disco, com serialização manual (plana) para evitar problemas de recursão com `pickle`.
-
-### Estrutura de dados
-
-- Registros são armazenados no arquivo binário `questoes.dat`.
-- Cada índice aponta para uma posição exata dentro desse arquivo.
-- Há suporte completo à reconstrução dos índices sem necessidade de reprocessar os CSVs.
+- Os dados das questões são armazenados no arquivo binário `questoes.dat`.
+- Cada índice mapeia para a posição binária do registro.
+- Os índices são persistidos em disco com serialização manual (plana), evitando problemas de recursão.
+- O sistema suporta reconstrução total dos índices a partir do `.dat` e do `combinado.json`.
 
 ---
 
-O sistema é modular, extensível e projetado para escalar com segurança. Basta alterar o `main.py` ou criar novas interfaces para expandir suas funcionalidades.
+O sistema é modular, direto e extensível. Basta adaptar o `main.py` ou criar novas interfaces com base na estrutura já disponível.
