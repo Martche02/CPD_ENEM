@@ -147,7 +147,7 @@ def menu(indices):
 
                         for pos in pagina:
                             r = ler_registro(ARQ_DAT, pos)
-                        print(f"ID: {r['identificador']} — disciplina: {r['disciplina']}")
+                            print(f"ID: {r['identificador']} — disciplina: {r['disciplina']}")
 
                         print("\n  ← : Esquerda / → : Direita / q para sair")
 
