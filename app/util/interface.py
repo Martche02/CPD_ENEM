@@ -17,6 +17,7 @@ def menu(indices):
                 ident = int(input("Digite o identificador: "))
                 pos = indices['ident'].buscar(ident)
                 if pos is not None:
+                    pos = pos[0]
                     r = ler_registro(ARQ_DAT, pos)
                     print("\n--- Questão encontrada ---")
                     for k,v in r.items():
@@ -45,8 +46,9 @@ def menu(indices):
             chave = input("Disciplina: ")
             pos = indices['disc'].buscar(chave)
             if pos:
-                r = ler_registro(ARQ_DAT, pos)
-                print(f"ID: {r['identificador']} — disciplina: {r['disciplina']}")
+                for p in pos:
+                    r = ler_registro(ARQ_DAT, p)
+                    print(f"ID: {r['identificador']} — disciplina: {r['disciplina']}")
             else:
                 print("❌ Nada encontrado")
 

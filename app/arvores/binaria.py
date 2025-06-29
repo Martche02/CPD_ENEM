@@ -4,7 +4,7 @@ from typing import List, Dict
 class NoBinaria:
     def __init__(self, chave: str, posicao: int):
         self.chave: str = chave
-        self.posicao: int = posicao
+        self.posicoes: List[int] = [posicao]  # agora guarda múltiplas posições
         self.esq: NoBinaria | None = None
         self.dir: NoBinaria | None = None
 
@@ -30,16 +30,16 @@ class BinariaTree:
             else:
                 self._inserir_rec(no.dir, chave, posicao)
         else:
-            no.posicao = posicao
+            no.posicoes.append(posicao)  # adiciona à lista existente
 
-    def buscar(self, chave: str) -> int | None:
+    def buscar(self, chave: str) -> List[int]:
         return self._buscar_rec(self.raiz, chave)
 
-    def _buscar_rec(self, no: NoBinaria | None, chave: str) -> int | None:
+    def _buscar_rec(self, no: NoBinaria | None, chave: str) -> List[int]:
         if no is None:
-            return None
+            return []
         if chave == no.chave:
-            return no.posicao
+            return no.posicoes
         if chave < no.chave:
             return self._buscar_rec(no.esq, chave)
         return self._buscar_rec(no.dir, chave)
@@ -47,7 +47,7 @@ class BinariaTree:
     def salvar_em_arquivo(self, caminho: str) -> None:
         """
         Serializa a árvore em forma plana:
-        - 'nodes': lista de dicionários com 'chave', 'posicao', 'esq', 'dir'
+        - 'nodes': lista de dicionários com 'chave', 'posicoes', 'esq', 'dir'
         - 'raiz': índice do nó raiz na lista (ou None)
         """
         if self.raiz is None:
@@ -61,7 +61,12 @@ class BinariaTree:
                 if node not in mapping:
                     idx = len(nodes)
                     mapping[node] = idx
-                    nodes.append({'chave': node.chave, 'posicao': node.posicao, 'esq': None, 'dir': None})
+                    nodes.append({
+                        'chave': node.chave,
+                        'posicoes': node.posicoes,
+                        'esq': None,
+                        'dir': None
+                    })
                     if node.esq:
                         stack.append(node.esq)
                     if node.dir:
@@ -73,6 +78,7 @@ class BinariaTree:
             data = {'raiz': mapping[self.raiz], 'nodes': nodes}
         with open(caminho, 'wb') as f:
             pickle.dump(data, f)
+
     @staticmethod
     def carregar_de_arquivo(caminho: str) -> 'BinariaTree':
         try:
@@ -86,9 +92,10 @@ class BinariaTree:
         if raiz_idx is None or not nodes_data:
             return BinariaTree()
 
-        instancias = [NoBinaria(entry['chave'], entry['posicao']) for entry in nodes_data]
+        instancias = [NoBinaria(entry['chave'], 0) for entry in nodes_data]
         for idx, entry in enumerate(nodes_data):
             no = instancias[idx]
+            no.posicoes = entry['posicoes']  # restaura todas as posições
             esq = entry.get('esq')
             dir_ = entry.get('dir')
             no.esq = instancias[esq] if esq is not None else None

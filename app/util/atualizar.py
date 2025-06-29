@@ -62,7 +62,7 @@ def reaplicar_json(indices):
         pos = indices['ident'].buscar(identificador)
         if pos is None:
             continue
-
+        pos = pos[0]
         if not valido:
             txt = disc = cont = top = "Nenhum resultado"
         else:

@@ -7,6 +7,7 @@ def verificar_exemplo_por_id(indices, ident=24455):
     if pos is None:
         print("❌ ID não encontrado")
         return
+    pos = pos[0]
     r = ler_registro(ARQ_DAT, pos)
     for k, v in r.items():
         print(f"{k}: {v}")
@@ -22,7 +23,7 @@ def testar_disciplina(indices, disc="Química"):
     print(f"\n🔎 Testando disciplina: {disc}")
     pos = indices['disc'].buscar(disc)
     if pos:
-        r = ler_registro(ARQ_DAT, pos)
+        r = ler_registro(ARQ_DAT, pos[0])
         print(f"✔️ ID: {r['identificador']} | Disciplina: {r['disciplina']}")
     else:
         print("❌ Não encontrada")
