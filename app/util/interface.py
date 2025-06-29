@@ -1,4 +1,5 @@
 from util.manipulador import ler_registro
+import msvcrt
 
 ARQ_DAT = 'dados/questoes.dat'
 
@@ -28,29 +29,146 @@ def menu(indices):
 
         elif opcao == '2':
             try:
-                val = float(input("Dificuldade desejada: "))
-                resultados = indices['dif'].buscar(val)
-                for pos in resultados:
-                    r = ler_registro(ARQ_DAT, pos)
-                    print(f"ID: {r['identificador']} — dificuldade: {r['dificuldade']}")
-            except: print("❌ Valor inválido")
+                val_min = float(input("Dificuldade [0,1]: "))
+                val_max = val_min + 0.05
+                val_min = val_min - 0.05
+                if val_min < 0:
+                    val_min = 0
+                if val_max > 1:
+                    val_max = 1
+                resultados = indices['dif'].buscar_intervalo(val_min, val_max)
+                total_resultados = len(resultados)
+                tamanho_pagina = 10
+                total_paginas = (total_resultados + tamanho_pagina - 1) // tamanho_pagina
+
+                if total_resultados == 0:
+                    print("Nenhum resultado encontrado.")
+                else:
+                    print(f"\n {total_resultados} resultado(s) encontrado(s). Use ← e → para navegar, 'q' para sair.")
+
+                    pagina_atual = 0
+                    while True:
+                        # Limpa a tela (opcional)
+                        print(f"\n Página {pagina_atual + 1} de {total_paginas}")
+                        inicio = pagina_atual * tamanho_pagina
+                        fim = inicio + tamanho_pagina
+                        pagina = resultados[inicio:fim]
+
+                        for pos in pagina:
+                            r = ler_registro(ARQ_DAT, pos)
+                            print(f"ID: {r['identificador']} — dificuldade: {r['dificuldade']}")
+
+                        print("\n  ← : Esquerda / → : Direita / q para sair")
+
+                        key = msvcrt.getch()
+                        if key == b'\xe0':  #setas
+                            key = msvcrt.getch()
+                            if key == b'M':  #seta direita
+                                if pagina_atual + 1 < total_paginas:
+                                    pagina_atual += 1
+                                else:
+                                    print("Última página.")
+                            elif key == b'K':  #seta esquerda
+                                if pagina_atual > 0:
+                                    pagina_atual -= 1
+                                else:
+                                    print("Primeira página.")
+                        elif key == b'q':
+                            print("Saindo...")
+                            break
+            except:
+                print("❌ Entrada inválida")
 
         elif opcao == '3':
-            prefixo = input("Prefixo do texto: ")[:20]
-            resultados = indices['texto'].buscar_prefixo(prefixo)
-            for pos in resultados:
-                r = ler_registro(ARQ_DAT, pos)
-                print(f"ID: {r['identificador']} — texto: {r['texto_long'][:60]}")
+            try:
+                prefixo = input("Prefixo do texto: ")[:20]
+                resultados = indices['texto'].buscar_prefixo(prefixo)
+                total_resultados = len(resultados)
+                tamanho_pagina = 10
+                total_paginas = (total_resultados + tamanho_pagina - 1) // tamanho_pagina
 
+                if total_resultados == 0:
+                    print("Nenhum resultado encontrado.")
+                else:
+                    print(f"\n {total_resultados} resultado(s) encontrado(s). Use ← e → para navegar, 'q' para sair.")
+
+                    pagina_atual = 0
+                    while True:
+                        # Limpa a tela (opcional)
+                        print(f"\n Página {pagina_atual + 1} de {total_paginas}")
+                        inicio = pagina_atual * tamanho_pagina
+                        fim = inicio + tamanho_pagina
+                        pagina = resultados[inicio:fim]
+
+                        for pos in pagina:
+                            r = ler_registro(ARQ_DAT, pos)
+                            print(f"ID: {r['identificador']} — texto: {r['texto_long'][:60]}")
+
+                        print("\n  ← : Esquerda / → : Direita / q para sair")
+
+                        key = msvcrt.getch()
+                        if key == b'\xe0':  #setas
+                            key = msvcrt.getch()
+                            if key == b'M':  #seta direita
+                                if pagina_atual + 1 < total_paginas:
+                                    pagina_atual += 1
+                                else:
+                                    print("Última página.")
+                            elif key == b'K':  #seta esquerda
+                                if pagina_atual > 0:
+                                    pagina_atual -= 1
+                                else:
+                                    print("Primeira página.")
+                        elif key == b'q':
+                            print("Saindo...")
+                            break
+            except:
+                print("❌ Entrada inválida")
         elif opcao == '4':
-            chave = input("Disciplina: ")
-            pos = indices['disc'].buscar(chave)
-            if pos:
-                for p in pos:
-                    r = ler_registro(ARQ_DAT, p)
-                    print(f"ID: {r['identificador']} — disciplina: {r['disciplina']}")
-            else:
-                print("❌ Nada encontrado")
+            try:
+                chave = input("Disciplina: ")
+                resultados = indices['disc'].buscar(chave)
+                total_resultados = len(resultados)
+                tamanho_pagina = 10
+                total_paginas = (total_resultados + tamanho_pagina - 1) // tamanho_pagina
+
+                if total_resultados == 0:
+                    print("Nenhum resultado encontrado.")
+                else:
+                    print(f"\n {total_resultados} resultado(s) encontrado(s). Use ← e → para navegar, 'q' para sair.")
+
+                    pagina_atual = 0
+                    while True:
+                        # Limpa a tela (opcional)
+                        print(f"\n Página {pagina_atual + 1} de {total_paginas}")
+                        inicio = pagina_atual * tamanho_pagina
+                        fim = inicio + tamanho_pagina
+                        pagina = resultados[inicio:fim]
+
+                        for pos in pagina:
+                            r = ler_registro(ARQ_DAT, pos)
+                        print(f"ID: {r['identificador']} — disciplina: {r['disciplina']}")
+
+                        print("\n  ← : Esquerda / → : Direita / q para sair")
+
+                        key = msvcrt.getch()
+                        if key == b'\xe0':  #setas
+                            key = msvcrt.getch()
+                            if key == b'M':  #seta direita
+                                if pagina_atual + 1 < total_paginas:
+                                    pagina_atual += 1
+                                else:
+                                    print("Última página.")
+                            elif key == b'K':  #seta esquerda
+                                if pagina_atual > 0:
+                                    pagina_atual -= 1
+                                else:
+                                    print("Primeira página.")
+                        elif key == b'q':
+                            print("Saindo...")
+                            break
+            except:
+                print("❌ Entrada inválida")
 
         elif opcao == '5':
             print("Saindo...")

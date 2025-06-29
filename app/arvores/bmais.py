@@ -150,3 +150,20 @@ class BMaisTree:
         tree = BMaisTree(ordem)
         tree.raiz = inst[data['raiz']]
         return tree
+    def buscar_intervalo(self, minimo: float, maximo: float, no: NoBMais = None) -> list[int]:
+        if no is None:
+            no = self.raiz
+
+        resultados = []
+
+        if no.folha:
+            for i, k in enumerate(no.chaves):
+                if minimo <= k <= maximo:
+                    resultados.append(no.filhos[i])
+            return resultados
+        else:
+            for i, k in enumerate(no.chaves):
+                if minimo < k:
+                    resultados += self.buscar_intervalo(minimo, maximo, no.filhos[i])
+            resultados += self.buscar_intervalo(minimo, maximo, no.filhos[-1])
+            return resultados
